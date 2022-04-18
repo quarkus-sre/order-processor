@@ -17,12 +17,13 @@ import org.eclipse.microprofile.reactive.messaging.Emitter;
 public class OrderResource {
     
     @Inject
-    @Channel("price-create")
+    @Channel("orders-out")
     Emitter<Order> orderEmitter;
 
     @POST
     public void order(Order order) {
         orderEmitter.send(order);
+        System.out.println("OrderResource.order() "+order.getCustomer());
     }
     
 }
