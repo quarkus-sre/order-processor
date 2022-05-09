@@ -1,5 +1,7 @@
 package com.redhat.quarkus.sre.service;
 
+import java.time.LocalDateTime;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -22,6 +24,7 @@ public class OrderResource {
 
     @POST
     public void order(Order order) {
+        order.setCreationDateTime(LocalDateTime.now());
         orderEmitter.send(order);
         System.out.println("OrderResource.order() "+order.getCustomer());
     }

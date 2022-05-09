@@ -1,6 +1,10 @@
 package com.redhat.quarkus.sre.domain;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
 
 public class Order { 
 
@@ -12,8 +16,19 @@ public class Order {
 
     private String paymentMethod;
 
+    @Schema(hidden = true)
+    private LocalDateTime creationDateTime;
+
     public String getCustomer() {
         return customer;
+    }
+
+    public LocalDateTime getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public void setCreationDateTime(LocalDateTime creationDateTime) {
+        this.creationDateTime = creationDateTime;
     }
 
     public void setCustomer(String customer) {
