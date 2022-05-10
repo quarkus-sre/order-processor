@@ -13,6 +13,7 @@ import com.redhat.quarkus.sre.domain.Order;
 
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
+import org.jboss.logging.Logger;
 @Path("orders")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -22,11 +23,14 @@ public class OrderResource {
     @Channel("orders-out")
     Emitter<Order> orderEmitter;
 
+    @Inject
+    Logger logger;
+
     @POST
     public void order(Order order) {
         order.setCreationDateTime(LocalDateTime.now());
         orderEmitter.send(order);
-        System.out.println("OrderResource.order() "+order.getCustomer());
+        logger.infof("OrderResource.order() %s", order.getCustomer());
     }
     
 }
