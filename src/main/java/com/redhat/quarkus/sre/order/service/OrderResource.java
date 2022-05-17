@@ -1,4 +1,4 @@
-package com.redhat.quarkus.sre.service;
+package com.redhat.quarkus.sre.order.service;
 
 import java.time.LocalDateTime;
 
@@ -9,7 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.redhat.quarkus.sre.domain.Order;
+import com.redhat.quarkus.sre.order.domain.Order;
 
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;

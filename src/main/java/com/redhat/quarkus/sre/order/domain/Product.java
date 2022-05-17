@@ -1,4 +1,4 @@
-package com.redhat.quarkus.sre.domain;
+package com.redhat.quarkus.sre.order.domain;
 
 import java.math.BigDecimal;
 
