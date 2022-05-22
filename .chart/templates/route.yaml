@@ -1,0 +1,18 @@
+{{- if .Values.enabled }}
+{{- if .Values.app.route }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Values.app.name }}-route
+  namespace: {{ .Values.app.namespace }}
+spec:
+  host: 
+  to:
+    kind: Service
+    name: {{ .Values.app.name }}
+  port:
+    targetPort: {{ .Values.app.container.port }}-tcp
+  wildcardPolicy: None
+{{- end }}
+{{- end }}

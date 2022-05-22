@@ -1,0 +1,81 @@
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: {{ .Values.app.name }}
+  namespace: {{ .Values.app.namespace }}
+  labels:
+    app: {{ .Values.app.name }}
+    app.kubernetes.io/component: {{ .Values.app.name }}
+    app.kubernetes.io/instance: {{ .Values.app.name }}
+    app.kubernetes.io/name: {{ .Values.app.name }}
+    app.kubernetes.io/part-of: {{ .Values.app.name }}
+    app.openshift.io/runtime: {{ .Values.app.pipeline.runtime.name }}
+    app.openshift.io/runtime-version: {{ .Values.app.pipeline.runtime.version }}
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - {{ .Values.app.name }}
+        from:
+          kind: ImageStreamTag
+          namespace: {{ .Values.app.namespace }}
+          name: '{{ .Values.app.name }}:latest'
+    - type: ConfigChange
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    app: {{ .Values.app.name }}
+    deploymentconfig: {{ .Values.app.name }}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: {{ .Values.app.name }}
+        deploymentconfig: {{ .Values.app.name }}
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}
+          image: '{{ .Values.app.name }}:latest'
+          # command:
+          #   - java
+          #   - '-Dquarkus.http.host=0.0.0.0'
+          #   - '-Djava.util.logging.manager=org.jboss.logmanager.LogManager'
+          #   - '-jar'
+          #   - /deployments/{{ .Values.app.name }}-{{ .Values.app.version }}.jar
+          env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: JAVA_APP_JAR
+              value: /deployments/{{ .Values.app.name }}-{{ .Values.app.version }}.jar 
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8443
+              protocol: TCP
+            - containerPort: 8778
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
