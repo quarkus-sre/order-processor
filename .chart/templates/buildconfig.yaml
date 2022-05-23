@@ -1,0 +1,54 @@
+{{- if .Values.enabled }}
+{{- if .Values.app.buildconfig }}
+---
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: {{ .Values.app.name }}
+  namespace: {{ .Values.app.namespace }}
+  labels:
+    app: {{ .Values.app.name }}
+    app.kubernetes.io/component: {{ .Values.app.name }}
+    app.kubernetes.io/instance: {{ .Values.app.name }}
+    app.kubernetes.io/name: {{ .Values.app.name }}
+    app.kubernetes.io/part-of: {{ .Values.app.name }}
+    app.openshift.io/runtime: {{ .Values.app.buildconfig.runtime.name }}
+    app.openshift.io/runtime-version: {{ .Values.app.buildconfig.runtime.name }}
+spec:
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: '{{ .Values.app.name }}:latest'
+  resources: {}
+  successfulBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 5
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: openshift
+        name: 'java:openjdk-11-ubi8'
+  postCommit: {}
+  source:
+    type: Git
+    git:
+      uri: '{{ .Values.app.git.repo }}'
+      ref: main
+    contextDir: /
+  triggers:
+    - type: Generic
+      generic:
+        secretReference:
+          name: {{ .Values.app.name }}-generic-webhook-secret
+    - type: GitHub
+      github:
+        secretReference:
+          name: {{ .Values.app.name }}-github-webhook-secret
+    - type: ImageChange
+      imageChange: {}
+    - type: ConfigChange
+  runPolicy: Serial
+{{- end }}
+{{- end }}
