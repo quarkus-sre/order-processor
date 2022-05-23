@@ -12,8 +12,8 @@ metadata:
     app.kubernetes.io/instance: {{ .Values.app.name }}
     app.kubernetes.io/name: {{ .Values.app.name }}
     app.kubernetes.io/part-of: {{ .Values.app.name }}
-    app.openshift.io/runtime: {{ .Values.app.buildconfig.runtime.name }}
-    app.openshift.io/runtime-version: {{ .Values.app.buildconfig.runtime.name }}
+    app.openshift.io/runtime: {{ .Values.app.runtime.name }}
+    app.openshift.io/runtime-version: {{ .Values.app.runtime.name }}
 spec:
   nodeSelector: null
   output:

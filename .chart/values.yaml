@@ -7,10 +7,11 @@ app:
   container:
     port: 8080
   route: true
-  pipeline:
-    runtime: 
-      name: openjdk-11-ubi8
-      version: openjdk-11-ubi8
+  runtime: 
+    name: openjdk-11-ubi8
+    version: openjdk-11-ubi8
+  buildconfig: true
+  # pipeline:
     # imagestream: registry.access.redhat.com/ubi8/openjdk-11:1.11
   git:
     repo: https://github.com/quarkus-sre/order-processor
