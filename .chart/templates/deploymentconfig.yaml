@@ -55,14 +55,16 @@ spec:
           #   - '-Djava.util.logging.manager=org.jboss.logmanager.LogManager'
           #   - '-jar'
           #   - /deployments/{{ .Values.app.name }}-{{ .Values.app.version }}.jar
-          env:
-            - name: KUBERNETES_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.namespace
-            - name: JAVA_APP_JAR
-              value: /deployments/{{ .Values.app.name }}-{{ .Values.app.version }}.jar 
+          # env:
+          #   - name: KUBERNETES_NAMESPACE
+          #     valueFrom:
+          #       fieldRef:
+          #         apiVersion: v1
+          #         fieldPath: metadata.namespace
+          #   - name: JAVA_APP_JAR
+          #     value: /deployments/{{ .Values.app.name }}-{{ .Values.app.version }}.jar
+          #   - name: AB_JOLOKIA_OFF
+          #     value: true
           ports:
             - containerPort: 8080
               protocol: TCP
