@@ -19,6 +19,7 @@ import org.jboss.logging.Logger;
 
 import io.micrometer.core.annotation.Counted;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.reactive.messaging.MutinyEmitter;
 @Path("orders")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -26,7 +27,7 @@ public class OrderResource {
     
     @Inject
     @Channel("orders-out")
-    Emitter<Order> orderEmitter;
+    MutinyEmitter<Order> orderEmitter;
 
     @Inject
     Logger logger;
@@ -37,7 +38,7 @@ public class OrderResource {
         order.setCreationDateTime(LocalDateTime.now());
         logger.infof("OrderResource.order() %s", order.getCustomer());
         // FIXME is not the best way to return after 3s
-        return Uni.createFrom().completionStage(orderEmitter.send(order)).ifNoItem().after(Duration.ofSeconds(3)).fail();
+        return orderEmitter.send(order).ifNoItem().after(Duration.ofSeconds(3)).fail();
     }
     
 }
