@@ -1,6 +1,8 @@
 package com.redhat.quarkus.sre.order.service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.concurrent.CompletionStage;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -14,6 +16,9 @@ import com.redhat.quarkus.sre.order.domain.Order;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.jboss.logging.Logger;
+
+import io.micrometer.core.annotation.Counted;
+import io.smallrye.mutiny.Uni;
 @Path("orders")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -27,15 +32,12 @@ public class OrderResource {
     Logger logger;
 
     @POST
-    public void order(Order order) {
+    @Counted
+    public Uni<Void> order(Order order) {
         order.setCreationDateTime(LocalDateTime.now());
-        orderEmitter.send(order).thenAcceptAsync(s -> {
-            System.out.println("OrderResource.order(ENVIADO PRO KAFKA)");
-        }).exceptionally(e -> {
-            System.out.println("OrderResource.order(ERRO AO ENVIAR PRO KAFKA)");
-            return null;
-        });
         logger.infof("OrderResource.order() %s", order.getCustomer());
+        // FIXME is not the best way to return after 3s
+        return Uni.createFrom().completionStage(orderEmitter.send(order)).ifNoItem().after(Duration.ofSeconds(3)).fail();
     }
     
 }
