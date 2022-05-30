@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.redhat.quarkus.sre.order.domain.Order;
 
-import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.jboss.logging.Logger;
@@ -28,10 +27,14 @@ public class OrderResource {
     Logger logger;
 
     @POST
-    @Counted(absolute = true, name = "sre.order-receiver.orders")
     public void order(Order order) {
         order.setCreationDateTime(LocalDateTime.now());
-        orderEmitter.send(order);
+        orderEmitter.send(order).thenAcceptAsync(s -> {
+            System.out.println("OrderResource.order(ENVIADO PRO KAFKA)");
+        }).exceptionally(e -> {
+            System.out.println("OrderResource.order(ERRO AO ENVIAR PRO KAFKA)");
+            return null;
+        });
         logger.infof("OrderResource.order() %s", order.getCustomer());
     }
     
