@@ -2,7 +2,6 @@ package com.redhat.quarkus.sre.order.service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.concurrent.CompletionStage;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -14,7 +13,6 @@ import javax.ws.rs.core.MediaType;
 import com.redhat.quarkus.sre.order.domain.Order;
 
 import org.eclipse.microprofile.reactive.messaging.Channel;
-import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.jboss.logging.Logger;
 
 import io.micrometer.core.annotation.Counted;
